@@ -1,0 +1,11 @@
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\bin\Debug\PruebaTech.exe.config
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\bin\Debug\PruebaTech.exe
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\bin\Debug\PruebaTech.pdb
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.csproj.AssemblyReference.cache
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.Properties.Resources.resources
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.View.Form_Principal.resources
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.csproj.GenerateResource.cache
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.csproj.CoreCompileInputs.cache
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.exe
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.pdb
+C:\Users\Jeremy\Desktop\PruebaTech\PruebaTech\obj\Debug\PruebaTech.View.Form_Actualizar.resources

@@ -1,0 +1,194 @@
+-- CREATE DATABASE Compania;
+
+USE Compania;
+
+GO
+DROP TABLE IF EXISTS Producto;
+
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'CrearProducto')
+    DROP PROCEDURE CrearProducto
+GO
+
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'ActualizarProducto')
+    DROP PROCEDURE ActualizarProducto
+GO
+
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'EliminarProducto')
+    DROP PROCEDURE EliminarProducto
+GO
+
+
+CREATE TABLE Producto (
+    ID INT PRIMARY KEY IDENTITY(1,1),  
+    Nombre VARCHAR(255) NOT NULL,        
+    Descripcion VARCHAR(500),            
+    Precio DECIMAL(10, 2) CHECK (Precio > 0),   
+    CantidadEnStock INT CHECK (CantidadEnStock >= 0)   
+);
+
+
+GO
+CREATE PROCEDURE CrearProducto(
+    @p_Nombre VARCHAR(255),
+    @p_Descripcion VARCHAR(500),
+    @p_Precio DECIMAL(10, 2),
+    @p_CantidadEnStock INT
+)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validación: El nombre es obligatorio
+        IF (LEN(TRIM(@p_Nombre)) = 0)
+        BEGIN
+            RAISERROR('El nombre del producto es obligatorio.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validación: El precio debe ser positivo
+        IF (@p_Precio <= 0)
+        BEGIN
+            RAISERROR('El precio del producto debe ser un valor positivo.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validación: La cantidad en stock no puede ser negativa
+        IF (@p_CantidadEnStock < 0)
+        BEGIN
+            RAISERROR('La cantidad en stock no puede ser un valor negativo.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Inserción si todas las validaciones pasan
+        INSERT INTO Producto (Nombre, Descripcion, Precio, CantidadEnStock)
+        VALUES (@p_Nombre, @p_Descripcion, @p_Precio, @p_CantidadEnStock);
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+
+
+
+GO
+CREATE PROCEDURE ActualizarProducto(
+    @p_ID INT,
+    @p_Nombre VARCHAR(255),
+    @p_Descripcion VARCHAR(500),
+    @p_Precio DECIMAL(10, 2),
+    @p_CantidadEnStock INT
+)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validación: El ID es obligatorio
+        IF (@p_ID IS NULL OR @p_ID <= 0)
+        BEGIN
+            RAISERROR('El ID del producto es obligatorio y debe ser mayor que cero.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validación: El nombre es obligatorio
+        IF (LEN(TRIM(@p_Nombre)) = 0)
+        BEGIN
+            RAISERROR('El nombre del producto es obligatorio.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validación: El precio debe ser positivo
+        IF (@p_Precio <= 0)
+        BEGIN
+            RAISERROR('El precio del producto debe ser un valor positivo.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validación: La cantidad en stock no puede ser negativa
+        IF (@p_CantidadEnStock < 0)
+        BEGIN
+            RAISERROR('La cantidad en stock no puede ser un valor negativo.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Verifica si el producto existe
+        IF NOT EXISTS (SELECT 1 FROM Producto WHERE ID = @p_ID)
+        BEGIN
+            RAISERROR('El producto con el ID proporcionado no existe.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Actualización si todas las validaciones pasan
+        UPDATE Producto
+        SET 
+            Nombre = @p_Nombre,
+            Descripcion = @p_Descripcion,
+            Precio = @p_Precio,
+            CantidadEnStock = @p_CantidadEnStock
+        WHERE ID = @p_ID;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+
+
+GO
+CREATE PROCEDURE EliminarProducto(
+    @p_ID INT
+)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validación: El ID es obligatorio
+        IF (@p_ID IS NULL OR @p_ID <= 0)
+        BEGIN
+            RAISERROR('El ID del producto es obligatorio y debe ser mayor que cero.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Verifica si el producto existe
+        IF NOT EXISTS (SELECT 1 FROM Producto WHERE ID = @p_ID)
+        BEGIN
+            RAISERROR('El producto con el ID proporcionado no existe.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Eliminación si todas las validaciones pasan
+        DELETE FROM Producto
+        WHERE ID = @p_ID;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+
+SELECT * FROM Producto
